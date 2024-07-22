@@ -11,10 +11,18 @@ import TabNavigation from "./TabNavigation";
 const Stack = createStackNavigator();
 
 const RootNavigation = () => {
-	const [session, setSession] = useState(true);
+	const [session, setSession] = useState(false);
 	return (
 		<NavigationContainer>
-			<Stack.Navigator>
+			<Stack.Navigator
+				screenOptions={{
+					headerShown: false,
+					...TransitionPresets.SlideFromRightIOS,
+					animationEnabled: true,
+					gestureEnabled: true,
+					gestureDirection: "horizontal",
+				}}
+			>
 				{session ? (
 					<Stack.Screen name="TabNavigation" component={TabNavigation} />
 				) : (
