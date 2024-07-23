@@ -45,12 +45,21 @@ const SplashScreen = () => {
 					className="flex-row justify-center items-center"
 					entering={FadeInRight.duration(200).springify()}
 				>
-					<Text className="text-neutral-600 text-xl leading-[60px] pl-1" style={{
-						fontFamily: "PPNeueMonteal"
-					}}>
-						Crypto<Text className="text-[#F9A700]" style={{
-							fontFamily: "PPNeueMonteal"
-						}}>Night</Text>
+					<Text
+						className="text-neutral-600 text-xl leading-[60px] pl-1"
+						style={{
+							fontFamily: "PPNeueMonteal",
+						}}
+					>
+						Crypto
+						<Text
+							className="text-[#F9A700]"
+							style={{
+								fontFamily: "PPNeueMonteal",
+							}}
+						>
+							Night
+						</Text>
 					</Text>
 				</Animated.View>
 			</View>

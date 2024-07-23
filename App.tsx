@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 import { StatusBar } from "expo-status-bar";
 import RootNavigation from "./src/screens/navigation/RootNavigation";
 import useCachedResources from "./src/hooks/useCachedResources";
+import Toast from "react-native-toast-message";
 
 const App = () => {
 	const isLoadingComplete = useCachedResources();
@@ -13,6 +14,7 @@ const App = () => {
 		<Container>
 			<StatusBar style="auto" />
 			<RootNavigation />
+			<Toast />
 		</Container>
 	);
 };
