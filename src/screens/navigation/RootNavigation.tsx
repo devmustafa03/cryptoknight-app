@@ -7,11 +7,12 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigation from "./AuthNavigation";
 import TabNavigation from "./TabNavigation";
+import { useUserStore } from "@/src/store/useUserStore";
 
 const Stack = createStackNavigator();
 
 const RootNavigation = () => {
-	const [session, setSession] = useState(false);
+	const { session } = useUserStore();
 	return (
 		<NavigationContainer>
 			<Stack.Navigator
@@ -23,7 +24,7 @@ const RootNavigation = () => {
 					gestureDirection: "horizontal",
 				}}
 			>
-				{session ? (
+				{session && session.user ? (
 					<Stack.Screen name="TabNavigation" component={TabNavigation} />
 				) : (
 					<Stack.Screen name="AuthNavigation" component={AuthNavigation} />
