@@ -5,6 +5,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 	ActivityIndicator,
+	Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Formik } from "formik";
@@ -17,6 +18,8 @@ import { Image } from "expo-image";
 import ButtonOutline from "@/src/components/ButtonOutline";
 import Breaker from "@/src/components/Breaker";
 import InfoPopup from "@/src/components/InfoPopup";
+import { supabase } from "@/src/lib/supabase";
+import { useUserStore } from "@/src/store/useUserStore";
 
 type RootStackParamList = {
 	Home: undefined;
@@ -38,6 +41,7 @@ const LoginScreen: React.FC = () => {
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [infoPopup, setInfoPopup] = useState({ visible: false, message: "" });
+	const { setSession, setUser } = useUserStore();
 
 	const showInfoPopup = (field: "email" | "password") => {
 		let message = "";
@@ -53,13 +57,26 @@ const LoginScreen: React.FC = () => {
 	const handleLogin = async (values: { email: string; password: string }) => {
 		setIsLoading(true);
 		try {
-			// await login(values.email, values.password);
-			Toast.show({
-				type: "success",
-				text1: "Login Successful",
-				text2: "Welcome back!",
+			const {data: {session, user}, error} = await supabase.auth.signInWithPassword({
+				email: values.email,
+				password: values.password,
 			});
-			navigation.navigate("Home");
+			if (error) {
+				setIsLoading(false);
+				Alert.alert("Login Failed", error.message);
+				return;
+			}
+
+			if (session && user) {
+				setSession(session);
+				setUser(user);
+				setIsLoading(false);
+				Toast.show({
+					type: "success",
+					text1: "Login Successful",
+					text2: "Welcome back!",
+				});
+			}
 		} catch (error) {
 			Toast.show({
 				type: "error",
@@ -67,8 +84,6 @@ const LoginScreen: React.FC = () => {
 				text2:
 					error instanceof Error ? error.message : "An unknown error occurred",
 			});
-		} finally {
-			setIsLoading(false);
 		}
 	};
 

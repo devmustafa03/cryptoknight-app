@@ -5,6 +5,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 	ActivityIndicator,
+	Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Formik } from "formik";
@@ -17,13 +18,14 @@ import { Image } from "expo-image";
 import ButtonOutline from "@/src/components/ButtonOutline";
 import Breaker from "@/src/components/Breaker";
 import InfoPopup from "@/src/components/InfoPopup";
+import { supabase } from "@/src/lib/supabase";
 
 type RootStackParamList = {
 	Home: undefined;
 	Login: undefined;
 };
 
-const LoginSchema = Yup.object().shape({
+const RegisterSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email").required("Email is required"),
 	password: Yup.string()
 		.min(8, "Password must be at least 8 characters")
@@ -52,17 +54,27 @@ const RegisterScreen = () => {
 	const handleSignUp = async (values: { email: string; password: string }) => {
 		setIsLoading(true);
 		try {
-			// await login(values.email, values.password);
-			Toast.show({
-				type: "success",
-				text1: "Login Successful",
-				text2: "Welcome back!",
+			const {data: {session}, error} = await supabase.auth.signUp({
+				email: values.email,
+				password: values.password,
 			});
-			navigation.navigate("Home");
+			if (error) {
+				setIsLoading(false);
+				Alert.alert("Registration Failed", error.message);
+				return;
+			}
+			if (!session) {
+				Toast.show({
+					type: "success",
+					text1: "Registration Successful",
+					text2: "Hurray!",
+				});
+				navigation.navigate("Login");
+			}
 		} catch (error) {
 			Toast.show({
 				type: "error",
-				text1: "Login Failed",
+				text1: "Registeration Failed",
 				text2:
 					error instanceof Error ? error.message : "An unknown error occurred",
 			});
@@ -76,14 +88,14 @@ const RegisterScreen = () => {
 			// await googleSignIn();
 			Toast.show({
 				type: "success",
-				text1: "Google Sign-In Successful",
+				text1: "Google Sign-up Successful",
 				text2: "Welcome!",
 			});
 			navigation.navigate("Home");
 		} catch (error) {
 			Toast.show({
 				type: "error",
-				text1: "Google Sign-In Failed",
+				text1: "Google Sign-up Failed",
 				text2:
 					error instanceof Error ? error.message : "An unknown error occurred",
 			});
@@ -117,7 +129,7 @@ const RegisterScreen = () => {
 
 				<Formik
 					initialValues={{ email: "", password: "" }}
-					validationSchema={LoginSchema}
+					validationSchema={RegisterSchema}
 					onSubmit={handleSignUp}
 				>
 					{({
