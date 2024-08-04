@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Avatar from "@/src/components/Avatar";
@@ -10,6 +10,8 @@ import { Image } from "expo-image";
 import { useQuery } from "@tanstack/react-query";
 import { FetchAllCoins } from "@/src/utils/cryptoapi";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import numeral from "numeral";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 
 interface Coin {
 	uuid: string
@@ -66,8 +68,9 @@ const HomeScreen = () => {
 		retry: 1,
 	});
 
-	const renderItems = ({item, index}: {item: Coin, index: number}) => {
-		<Pressable className="flex-row w-full py-4 items-center">
+	const renderItem = ({item, index}: {item: Coin, index: number}) => {
+		return (
+			<Pressable className="flex-row w-full py-4 items-center">
 			<Animated.View
 				entering={FadeInDown.duration(100).delay(index*100).springify()}
 				className="w-full flex-row items-center"
@@ -77,16 +80,39 @@ const HomeScreen = () => {
 							<View className="w-10 h-10">
 								<Image
 									source={{ uri: item.iconUrl }}
-									// placeholder={}
+									placeholder={blurhash}
 									contentFit="cover"
 									transition={1000}
+									className="w-full h-full flex-1"
 									/>
 							</View>
 						</View>
 					</View>
+					<View className="w-[55%] justify-start items-start">
+						<Text className="font-bold text-lg">{item?.name}</Text>
+
+						<View className="flex-row items-center space-x-2">
+							<Text className="text-medium text-sm text-neutral-700">{numeral(item?.price).format('$0,0.00')}</Text>
+
+							<Text className={`font-medium text-sm ${item?.change > 0 ? "text-green-500" : "text-red-500"}`}>
+								{item.change}%
+							</Text>
+						</View>
+					</View>
+					<View className="w-[29%] justify-end items-end">
+						<Text className="font-bold text-base">{item.symbol}</Text>
+
+						<View className="flex-row items-center justify-center space-x-2">
+							<Text className="font-medium text-sm text-neutral-500">
+								{item.marketCap.length > 9 ? item.marketCap.slice(0, 9) : item.marketCap}
+							</Text>
+						</View>
+					</View>
 				</Animated.View>
 		</Pressable>
-	}
+		)
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<View className="relative">
@@ -180,7 +206,28 @@ const HomeScreen = () => {
 					</View>
 				</View>
 
-
+				{/* Coins */}
+				<ScrollView
+					contentContainerStyle={{
+						paddingBottom: 100,
+					}}
+					showsVerticalScrollIndicator={false}
+					>
+						<View className="px-4 py-8 items-center">
+							{IsAllCoinLoading ? (
+								<ActivityIndicator size="large" color="orange" />
+							): (
+								<FlatList
+									nestedScrollEnabled={true}
+									scrollEnabled={false}
+									data={CoinData.data.coins}
+									keyExtractor={(item) => item.uuid}
+									renderItem={renderItem}
+									showsVerticalScrollIndicator={false}
+									/>
+							)}
+						</View>
+					</ScrollView>
 			</View>
 		</SafeAreaView>
 	);

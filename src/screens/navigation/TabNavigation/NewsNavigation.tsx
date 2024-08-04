@@ -1,11 +1,23 @@
-import { View, Text } from "react-native";
 import React from "react";
+import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
+import MarketScreen from "../../tabs/market/MarketScreen";
+import NewsScreen from "../../tabs/news/NewsScreen";
+
+const Stack = createStackNavigator();
 
 const NewsNavigation = () => {
 	return (
-		<View>
-			<Text>NewsNavigation</Text>
-		</View>
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+				...TransitionPresets.SlideFromRightIOS,
+				animationEnabled: true,
+				gestureEnabled: true,
+				gestureDirection: "horizontal",
+			}}
+		>
+			<Stack.Screen name="NewsS" component={NewsScreen} />
+		</Stack.Navigator>
 	);
 };
 
