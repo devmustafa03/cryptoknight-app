@@ -105,7 +105,7 @@ const MarketScreen = () => {
 		<SafeAreaView className="flex-1 bg-white">
 			<View className="relative">
 				{/* Header */}
-				<View className="w-full flex-row justify-between items-center px-4">
+				<View className="w-full flex-row justify-between items-center px-4 mt-2">
 					<View className="w-3/4 flex-row space-x-2">
 						<View>
               <Text className="font-bold text-3xl">
@@ -115,7 +115,7 @@ const MarketScreen = () => {
 					</View>
 				</View>
 
-        <View className="w-full flex-row justify-between items-center px-4">
+        <View className="w-full flex-row justify-between items-center px-4 mt-4">
           {/* All */}
           <Pressable className={`w-1/4 justify-center items-center py-1 ${active === "all" ? "border-b-2 border-primary" : ""}`} onPress={allCoins}>
             <Text className={`text-lg ${active === "all" ? "font-extrabold" : "text-gray-500"}`}>All</Text>
@@ -139,7 +139,7 @@ const MarketScreen = () => {
 					}}
 					showsVerticalScrollIndicator={false}
 					>
-						<View className="px-4 py-8 items-center">
+						<View className="px-4 py-8 pt-4 items-center">
               {active === "all" && (
                 <View className="px-4 items-center">
                   {IsAllCoinLoading ? (

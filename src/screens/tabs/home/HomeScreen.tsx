@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Avatar from "@/src/components/Avatar";
 import useSupabaseAuth from "@/src/hooks/useSupabaseAuth";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useUserStore } from "@/src/store/useUserStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -27,11 +27,13 @@ const blurhash =
 		"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 const HomeScreen = () => {
-	const [avatarUrl, setAvatarUrl] = useState("");
+	const [avatarUrl, setAvatarUrl] = useState("https://img.freepik.com/free-vector/cheerful-square-character-illustration_1308-164239.jpg?w=826&t=st=1722856773~exp=1722857373~hmac=8af25cd403de549ec8e6feec3efdc18f39b897f4f30d2cc74dbcc074faa50f66");
 	const [username, setUsername] = useState("");
 	const [loading, setLoading] = useState(false);
 	const { getUserProfile } = useSupabaseAuth();
 	const { session } = useUserStore();
+
+	const navigateHome = useNavigation().navigate as any;
 
 	const handleGetProfile = async () => {
 		setLoading(true);
@@ -70,7 +72,7 @@ const HomeScreen = () => {
 
 	const renderItem = ({item, index}: {item: Coin, index: number}) => {
 		return (
-			<Pressable className="flex-row w-full py-4 items-center">
+			<Pressable className="flex-row w-full py-4 items-center" onPress={() => navigateHome("CoinDetails", { coinUUID: item.uuid })}>
 			<Animated.View
 				entering={FadeInDown.duration(100).delay(index*100).springify()}
 				className="w-full flex-row items-center"
@@ -117,33 +119,29 @@ const HomeScreen = () => {
 		<SafeAreaView className="flex-1 bg-white">
 			<View className="relative">
 				{/* Header */}
-				<View className="w-full flex-row justify-between items-center px-4">
+				<View className="w-full flex-row justify-between items-center px-4 my-4">
 					<View className="w-3/4 flex-row space-x-2">
 						<View className="justify-center items-center">
 							<View className="w-12 h-12 overflow-hidden rounded-2xl">
 								<Avatar size={50} url={avatarUrl} onUpload={handleGetProfile} />
 							</View>
 						</View>
+						<View>
 						<Text className="text-lg font-bold">
 							Hi, {username ? username : "User"}
 						</Text>
 						<Text className="text-sm text-neutral-500">
 							Have a good day
 						</Text>
+						</View>
 						<View>
 
-						</View>
-					</View>
-
-					<View className="py-8">
-						<View className="bg-neutral-700 rounded-lg p-1">
-							<Ionicons name="menu" size={24} color="white" />
 						</View>
 					</View>
 				</View>
 
 				{/* Content */}
-				<View className="mx-4 bg-neutral-800 rounded-3xl overflow-hidden my-4">
+				{/* <View className="mx-4 bg-neutral-800 rounded-3xl overflow-hidden my-4">
 					<View className="bg-orange-500 justify-center items-center py-6 rounded-3xl">
 						<Text className="text-sm font-medium text-neutral-700">
 							Total Balance
@@ -158,7 +156,7 @@ const HomeScreen = () => {
 						<View className="w-1/4 justify-center items-center space-y-2">
 							<View className="bg-neutral-400 w-10 h-10 overflow-hidden rounded-full p-2">
 								<Image
-									source={require("../../../assets/images/money-send.png")}
+									source={require("../../../../assets/images/money-send.png")}
 									placeholder={blurhash}
 									contentFit="cover"
 									transition={1000}
@@ -170,7 +168,7 @@ const HomeScreen = () => {
 						<View className="w-1/4 justify-center items-center space-y-2">
 							<View className="bg-neutral-400 w-10 h-10 overflow-hidden rounded-full p-2">
 								<Image
-									source={require("../../../assets/images/money-receive.png")}
+									source={require("../../../../assets/images/money-receive.png")}
 									placeholder={blurhash}
 									contentFit="cover"
 									transition={1000}
@@ -182,7 +180,7 @@ const HomeScreen = () => {
 						<View className="w-1/4 justify-center items-center space-y-2">
 							<View className="bg-neutral-400 w-10 h-10 overflow-hidden rounded-full p-2">
 								<Image
-									source={require("../../../assets/images/card-add.png")}
+									source={require("../../../../assets/images/card-add.png")}
 									placeholder={blurhash}
 									contentFit="cover"
 									transition={1000}
@@ -194,7 +192,7 @@ const HomeScreen = () => {
 						<View className="w-1/4 justify-center items-center space-y-2">
 							<View className="bg-neutral-400 w-10 h-10 overflow-hidden rounded-full p-2">
 								<Image
-									source={require("../../../assets/images/more.png")}
+									source={require("../../../../assets/images/more.png")}
 									placeholder={blurhash}
 									contentFit="cover"
 									transition={1000}
@@ -204,7 +202,7 @@ const HomeScreen = () => {
 						<Text className="text-white">More</Text>
 						</View>
 					</View>
-				</View>
+				</View> */}
 
 				{/* Coins */}
 				<ScrollView
@@ -213,7 +211,7 @@ const HomeScreen = () => {
 					}}
 					showsVerticalScrollIndicator={false}
 					>
-						<View className="px-4 py-8 items-center">
+						<View className="px-4 pb-8 items-center">
 							{IsAllCoinLoading ? (
 								<ActivityIndicator size="large" color="orange" />
 							): (

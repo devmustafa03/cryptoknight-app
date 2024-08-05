@@ -15,7 +15,7 @@ const SearchNavigation = () => {
 				gestureDirection: "horizontal",
 			}}
 		>
-			<Stack.Screen name="Search" component={SearchScreen} />
+			<Stack.Screen name="SearchS" component={SearchScreen} />
 		</Stack.Navigator>
 	);
 };

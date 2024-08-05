@@ -28,7 +28,6 @@ const blurhash =
 const SearchScreen = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any>([]);
-  const { navigate }: NavigationProp<SearchNavigationType> = useNavigation();
   const { navigate: navigateHome }: NavigationProp<HomeNavigationType> = useNavigation();
 
   const handleSearch = async (search: string) => {
@@ -83,7 +82,7 @@ const SearchScreen = () => {
 
 						<View className="flex-row items-center justify-center space-x-2"> 
 							<Text className="font-medium text-sm text-neutral-500">
-								{item?.marketCap.length > 9 ? item.marketCap.slice(0, 9) : item.marketCap}
+								{item?.marketCap?.length > 9 ? item.marketCap.slice(0, 9) : item.marketCap}
 							</Text>
 						</View>
 					</View>
@@ -105,7 +104,10 @@ const SearchScreen = () => {
       <View className="mx-4 mb-3 flex-row p-2 border-2 justify-between items-center bg-white rounded-lg shadow-sm">
         <TextInput placeholder="Search for a coin" placeholderTextColor="gray" className="w-full pl-2 flex-1 font-medium text-black tracking-wider" onChangeText={handleTextDebounce} />
 
-        <Pressable>
+        <Pressable onPress={() => {
+          handleSearch("");
+          setResults([]);
+        }}>
           <XMarkIcon color="gray" size={25} />
         </Pressable>
       </View>

@@ -16,7 +16,7 @@ const HomeNavigation = () => {
 				gestureDirection: "horizontal",
 			}}
 		>
-			<Stack.Screen name="Home" component={HomeScreen} />
+			<Stack.Screen name="HomeS" component={HomeScreen} />
 			<Stack.Screen name="CoinDetails" component={CoinDetailsScreen} />
 		</Stack.Navigator>
 	);

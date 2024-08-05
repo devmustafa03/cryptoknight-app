@@ -4,6 +4,7 @@ import axios from "axios";
 const apiBaseUri = "https://coinranking1.p.rapidapi.com";
 
 const coinsUri = `${apiBaseUri}/coins?referenceCurrencyUuid=yhjMzLPhuIDl&timePeriod=24h&tiers=1&orderBy=marketCap&orderDirection=desc&limit=50&offset=0`;
+const newsUrl = "https://cryptocurrency-news2.p.rapidapi.com/v1/coindesk";
 
 const CryptoApiCall = async (endpoints: string, params: any) => {
   const options = {
@@ -25,27 +26,6 @@ const CryptoApiCall = async (endpoints: string, params: any) => {
   }
 }
 
-const newsUrl = "https://cryptocurrency-news2.p.rapidapi.com/v1/coindesk";
-
-const NewsAPICall = async (endpoints: string, params: any) => {
-  const options = {
-    method: "GET",
-    url: endpoints,
-    params: params? params : {},
-    headers: {
-      "X-RapidAPI-Key": `${XRapidAPIKey}`,
-      "X-RapidAPI-Host": `${XRapidAPIHostNews}`,
-    },
-  };
-
-  try {
-    const response = await axios.request(options);
-    return response.data;
-  } catch (error) {
-    console.error(error); // TODO: Handle error;
-    return {};
-  }
-}
 
 export const FetchAllCoins = async () => {
   return await CryptoApiCall(coinsUri, {});
@@ -69,5 +49,15 @@ export const SearchCoin = async (search: string) => {
 
 // News
 export const FetchNews = async () => {
-  return await NewsAPICall(newsUrl, {});
+  try {
+    const response = await axios.get(newsUrl, {
+      headers: {
+        "x-rapidapi-key": `c1955f1ed6msh11b4dd8f0a03a62p1760fbjsn8587c7e8feba`,
+        "x-rapidapi-host": `cryptocurrency-news2.p.rapidapi.com`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
 }

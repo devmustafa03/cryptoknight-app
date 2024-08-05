@@ -15,27 +15,27 @@ const TabNavigation = () => {
 		<Tab.Navigator
 			screenOptions={({ route }) => ({
 				tabBarIcon: ({ focused, color, size = 25 }) => {
-					let iconName: "ios-home" | "ios-home-outline" | "ios-search" | "ios-search-outline" | "ios-stats-chart" | "ios-stats-chart-outline" | "ios-newspaper" | "ios-newspaper-outline" | "ios-person" | "ios-person-outline" = "ios-home";
+					let iconName: "home" | "home-outline" | "search-outline" | "search" | "stats-chart" | "stats-chart-outline" | "newspaper" | "newspaper-outline" | "man" | "man-outline" = "home";
 					if (route.name === "Home") {
 						iconName = focused
-							? "ios-home"
-							: "ios-home-outline";
+							? "home"
+							: "home-outline";
 					} else if (route.name === "Search") {
 						iconName = focused
-							? "ios-search"
-							: "ios-search-outline";
+							? "search"
+							: "search-outline";
 					} else if (route.name === "Market") {
 						iconName = focused
-							? "ios-stats-chart"
-							: "ios-stats-chart-outline";
+							? "stats-chart"
+							: "stats-chart-outline";
 					} else if (route.name === "News") {
 						iconName = focused
-							? "ios-newspaper"
-							: "ios-newspaper-outline";
+							? "newspaper"
+							: "newspaper-outline";
 					} else if (route.name === "Profile") {
 						iconName = focused
-							? "ios-person"
-							: "ios-person-outline";
+							? "man"
+							: "man-outline";
 					}
 					return <Ionicons name={iconName as any} size={size} color={focused ? "#F9A700": "gray"} />;
 				},

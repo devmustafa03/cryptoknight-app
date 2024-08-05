@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
 import { StatusBar } from "expo-status-bar";
@@ -12,8 +12,6 @@ const App = () => {
 	const isLoadingComplete = useCachedResources();
 	const { session, user } = useUserStore();
 	const queryClient = new QueryClient();
-
-	useEffect(() => console.log(user, session), [user, session]);
 
 	if (!isLoadingComplete) return null;
 	return (
