@@ -8,12 +8,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 const ProfileScreen = () => {
-	const [avatarUrl, setAvatarUrl] = useState("https://img.freepik.com/free-vector/cheerful-square-character-illustration_1308-164239.jpg?w=826&t=st=1722856773~exp=1722857373~hmac=8af25cd403de549ec8e6feec3efdc18f39b897f4f30d2cc74dbcc074faa50f66");
-	const [username, setUsername] = useState("");
 	const [loading, setLoading] = useState(false);
 	const { getUserProfile, signOut } = useSupabaseAuth();
 	const { session } = useUserStore();
 	const navigation = useNavigation<any>();
+	const { avatarUrl, username, setIsLoggedIn, setAvatarUrl, setUsername } = useUserStore();
+
 
   const handleGetProfile = async () => {
 		setLoading(true);
@@ -46,6 +46,7 @@ const ProfileScreen = () => {
 
 	const handleSignOut = async () => {
 		await signOut();
+		setIsLoggedIn(false);
 		Toast.show({
 			type: 'success',
 			text1: 'Logout Successful',
@@ -58,7 +59,7 @@ const ProfileScreen = () => {
       <View>
 				<View className='justify-center items-center py-14 pb-20 bg-primary'>
 					<View className='overflow-hidden border-2 border-white rounded-3xl'>
-						<Avatar size={100} url={avatarUrl} onUpload={() => console.log('upload')} />
+						<Avatar size={100} url={avatarUrl} onUpload={() => {}} />
 					</View>
 
 					<View className='w-full py-3 items-center'>

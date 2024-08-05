@@ -27,11 +27,16 @@ const blurhash =
 		"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 const HomeScreen = () => {
-	const [avatarUrl, setAvatarUrl] = useState("https://img.freepik.com/free-vector/cheerful-square-character-illustration_1308-164239.jpg?w=826&t=st=1722856773~exp=1722857373~hmac=8af25cd403de549ec8e6feec3efdc18f39b897f4f30d2cc74dbcc074faa50f66");
-	const [username, setUsername] = useState("");
 	const [loading, setLoading] = useState(false);
 	const { getUserProfile } = useSupabaseAuth();
 	const { session } = useUserStore();
+	const { avatarUrl, username, setAvatarUrl, setUsername } = useUserStore();
+
+  const { data: CoinData, isLoading: IsAllCoinLoading } = useQuery({
+    queryKey: ["allCoins"],
+    queryFn: FetchAllCoins,
+    retry: 1,
+  });
 
 	const navigateHome = useNavigation().navigate as any;
 
@@ -63,12 +68,6 @@ const HomeScreen = () => {
 			}
 		}, [session])
 	)
-
-	const {data: CoinData, isLoading: IsAllCoinLoading} = useQuery({
-		queryKey: ["allCoins"],
-		queryFn: FetchAllCoins,
-		retry: 1,
-	});
 
 	const renderItem = ({item, index}: {item: Coin, index: number}) => {
 		return (

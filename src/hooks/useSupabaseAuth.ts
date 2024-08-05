@@ -42,7 +42,7 @@ export default function useSupabaseAuth() {
     }
 
     async function getUserProfile() {
-        const { data, error, status} = await supabase.from("profiles").select(`username, full_name, avatar_url, email`).eq("id", session?.user.id).single();
+        const { data, error, status} = await supabase.from("profiles").select(`username, full_name, avatar_url`).eq("id", session?.user.id).single();
 
         return {
             data,
@@ -51,23 +51,32 @@ export default function useSupabaseAuth() {
         }
     }
 
-    const updateProfileImage = async (username:string, fullName: string, avatarUrl: string) => {
-        if(!session?.user) throw new Error("No user on the session!");
-
+    const updateProfileImage = async (username: string, fullName: string, avatarUrl: string) => {
+        if (!session?.user) throw new Error("No user on the session!");
+        
         const update = {
-            id: session?.user.id,
+            id: session.user.id,
             username,
             full_name: fullName,
             avatar_url: avatarUrl,
             updated_at: new Date(),
         }
-
-        const {error} = await supabase.from("profiles").upsert(update);
-
-        return {
-            error
-        };
-    }
+        
+        try {
+            const { data, error } = await supabase
+            .from("profiles")
+            .upsert(update)
+            .select()
+            .single();
+            
+            if (error) throw error;
+            
+            return { data, error: null };
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            return { data: null, error };
+        }
+    };
 
     return {
         signInWithEmail,

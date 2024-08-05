@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert, TextInput, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { useNavigation } from '@react-navigation/native';
-import { TextInput, Button } from 'react-native';
-import { Image } from 'expo-image';
-import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '@/src/lib/supabase';
 import { useUserStore } from '@/src/store/useUserStore';
-import { decode } from 'base64-arraybuffer';
 import useSupabaseAuth from '@/src/hooks/useSupabaseAuth';
+import Avatar from '@/src/components/Avatar'; // Make sure to import the Avatar component
 
 const EditProfileScreen = () => {
   const [avatarUrl, setAvatarUrl] = useState('');
   const [username, setUsername] = useState('');
-  const { updateProfileImage} = useSupabaseAuth();
+  const { updateProfileImage } = useSupabaseAuth();
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  const { session, setUser } = useUserStore();
+  const { session, updateUserProfile } = useUserStore();
 
   useEffect(() => {
     if (session?.user) {
@@ -51,49 +48,39 @@ const EditProfileScreen = () => {
     try {
       setLoading(true);
       const { error } = await updateProfileImage(username, fullName, avatarUrl);
-
+  
       if (error) throw error;
+  
+      // Update local state and global store
+      updateUserProfile(avatarUrl, username);
+  
+      // Refresh the profile data
+      await fetchProfile();
+  
       Alert.alert('Profile updated successfully');
-      setUser({ ...session?.user, user_metadata: { username, full_name: fullName, avatar_url: avatarUrl } } as any);
     } catch (error: any) {
       console.log('Error updating profile:', error.message);
-      Alert.alert('Error updating profile');
+      Alert.alert('Error updating profile', error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAvatarUpload = async () => {
+  const handleAvatarUpload = async (filePath: string) => {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-        base64: true,
-      });
-
-      if (!result.canceled && result.assets[0].base64) {
-        const file = result.assets[0] as any;
-        const fileExt = file.uri.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${session?.user.id}/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(filePath, decode(file.base64), {
-            contentType: `image/${fileExt}`,
-          });
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = await supabase.storage
-          .from('avatars')
-          .getPublicUrl(filePath);
+      const { data: urlData } = await supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+      
+      if (urlData) {
         setAvatarUrl(urlData.publicUrl);
+        // Update the profile with the new avatar URL
+        await updateProfileImage(username, fullName, urlData.publicUrl);
+        // Update the global store
+        updateUserProfile(urlData.publicUrl, username);
       }
     } catch (error: any) {
-      Alert.alert('Error uploading avatar', error.message);
+      Alert.alert('Error updating avatar', error.message);
     }
   };
 
@@ -107,13 +94,15 @@ const EditProfileScreen = () => {
       </View>
 
       <View className="flex-1 p-4">
-        <Pressable onPress={handleAvatarUpload} className="items-center mb-6">
-          <Image
-            source={{ uri: avatarUrl || 'https://via.placeholder.com/150' }}
-            className="w-32 h-32 rounded-full mb-2"
+        <View className="items-center mb-6">
+          <Avatar
+            size={128}
+            url={avatarUrl}
+            onUpload={handleAvatarUpload}
+            showUpload={true}
           />
-          <Text className="text-yellow-500">Change Avatar</Text>
-        </Pressable>
+          <Text className="text-yellow-500 mt-2">Tap to Change Avatar</Text>
+        </View>
 
         <TextInput
           placeholder="Username"

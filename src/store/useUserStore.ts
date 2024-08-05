@@ -11,6 +11,11 @@ interface UserStore {
     isLoggedIn: Boolean;
     setIsLoggedIn: (isLoggedIn: Boolean) => void;
     isOnborded: Boolean;
+    avatarUrl: string;
+    username: string;
+    setAvatarUrl: (url: string) => void;
+    setUsername: (username: string) => void;
+    updateUserProfile: (avatarUrl: string, username: string) => void;
 }
 
 export const useUserStore = create(
@@ -20,9 +25,18 @@ export const useUserStore = create(
             session: null,
             isLoggedIn: false,
             isOnborded: false,
+            avatarUrl: "",
+            username: "",
             setUser: (user: User | null) => set((state) => ({user})),
             setIsLoggedIn: (isLoggedIn: Boolean) => set((state) => ({isLoggedIn})),
             setSession: (session: Session | null) => set((state) => ({session})),
+            setAvatarUrl: (url: string) => set((state) => ({avatarUrl: url})),
+            setUsername: (username: string) => set((state) => ({username})),
+            updateUserProfile: (avatarUrl: string, username: string) => set((state) => ({
+                avatarUrl,
+                username,
+                user: state.user ? {...state.user, user_metadata: {...state.user.user_metadata, avatar_url: avatarUrl, username}} : null
+            })),
         }),
         {
             name: "fintechcrypto-user-store",

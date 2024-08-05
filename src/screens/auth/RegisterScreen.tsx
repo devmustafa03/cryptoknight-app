@@ -67,7 +67,7 @@ const RegisterScreen = () => {
 				Toast.show({
 					type: "success",
 					text1: "Registration Successful",
-					text2: "Hurray!",
+					text2: "Hurray! Please check mail for verification link.",
 				});
 				navigation.navigate("Login");
 			}
