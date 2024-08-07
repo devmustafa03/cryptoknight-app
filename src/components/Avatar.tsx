@@ -16,7 +16,7 @@ const Avatar: React.FC<AvatarProps> = ({ size, url, onUpload, showUpload = false
 
   useEffect(() => {
     setLocalAvatarUrl(avatarUrl || url || null);
-  }, []);
+  }, [avatarUrl, url]);
 
   const handleUpload = useCallback(() => {
     if (onUpload) {
