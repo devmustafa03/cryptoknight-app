@@ -1,50 +1,78 @@
-# Welcome to your Expo app 👋
+# CryptoNight - React Native Cryptocurrency Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+CryptoNight is a feature-rich React Native application for tracking cryptocurrencies, viewing market data, and staying updated with the latest crypto news.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Real-time Cryptocurrency Data**: Track prices, market caps, and price changes for a wide range of cryptocurrencies.
+- **User Authentication**: Secure login and registration system using Supabase.
+- **Personalized Profiles**: Users can create and edit their profiles, including avatar uploads.
+- **Market Overview**: View top gainers, losers, and overall market trends.
+- **Cryptocurrency News**: Stay informed with the latest news in the crypto world.
+- **Search Functionality**: Easily find specific cryptocurrencies.
+- **Responsive UI**: Smooth animations and a user-friendly interface built with React Native and NativeWind.
 
-   ```bash
+## Tech Stack
+
+- React Native
+- TypeScript
+- NativeWind (Tailwind CSS for React Native)
+- Supabase (Authentication and Database)
+- React Query
+- Formik & Yup (Form handling and validation)
+- React Navigation
+- Expo
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or later)
+- npm or yarn
+- Expo CLI
+
+### Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/devmustafa03/cryptoknight-app.git
+   ```
+
+2. Navigate to the project directory:
+   ```
+   cd cryptoknight-app
+   ```
+
+3. Install dependencies:
+   ```
    npm install
    ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
+   or
+   ```
+   yarn install
    ```
 
-In the output, you'll find options to open the app in a
+4. Set up environment variables:
+   Create a `.env` file in the root directory and add your Supabase and other API keys:
+   ```
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   CRYPTO_API_KEY=your_crypto_api_key
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+5. Start the development server:
+   ```
+   npx expo start
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Acknowledgments
 
-## Get a fresh project
+- [React Native](https://reactnative.dev/)
+- [Supabase](https://supabase.io/)
+- [NativeWind](https://www.nativewind.dev/)
+- [React Query](https://react-query.tanstack.com/)
+- [Expo](https://expo.dev/)
 
-When you're ready, run:
+## Contact
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+For any queries or support, please contact [mustafaazad533@gmail.com](mailto:mustafaazad533@gmail.com).
