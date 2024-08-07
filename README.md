@@ -1,6 +1,15 @@
 # CryptoNight - React Native Cryptocurrency Tracker
 
-CryptoNight is a feature-rich React Native application for tracking cryptocurrencies, viewing market data, and staying updated with the latest crypto news.
+CryptoNight is a feature-rich React Native application for tracking cryptocurrencies, viewing market data, and staying updated with the latest crypto news. [APK File](https://drive.google.com/drive/folders/1Q161sPb-jgCJaXmdqlCwaiTBBJLWXC31?usp=sharing)
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0cc65816-bc42-43fe-af47-f1bf7308e798" width="19%" alt="Splash Screen" />
+  <img src="https://github.com/user-attachments/assets/4f836c39-0fd5-4381-bf0f-6bf18d7158b2" width="19%" alt="Welcome Screen" />
+  <img src="https://github.com/user-attachments/assets/66a6d6e4-fcba-451d-bd31-56f15b1d93a0" width="19%" alt="Login Screen" />
+  <img src="https://github.com/user-attachments/assets/ad962c95-df65-4432-99bf-99ba1060dd66" width="19%" alt="Register Screen" />
+  <img src="https://github.com/user-attachments/assets/043002ac-cd61-493b-87bd-92dcf096210f" width="19%" alt="Home Screen" />
+</p>
+
 
 ## Features
 
