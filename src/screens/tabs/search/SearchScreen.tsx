@@ -129,4 +129,4 @@ const SearchScreen = () => {
 	);
 };
 
-export default SearchScreen;
+export default React.memo(SearchScreen);

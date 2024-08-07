@@ -45,6 +45,10 @@ const TabNavigation = () => {
 				tabBarLabelStyle: {
 					fontSize: 12,
 					fontWeight: "bold",
+					marginBottom: 4,
+					marginTop: -5,
+					paddingTop: 4,
+					height: 25,
 				},
 				...TransitionPresets.SlideFromRightIOS,
 				animationEnabled: true,

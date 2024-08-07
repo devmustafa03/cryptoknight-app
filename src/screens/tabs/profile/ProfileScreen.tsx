@@ -1,59 +1,56 @@
+import React, { useCallback, useState, useEffect } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 import Avatar from '@/src/components/Avatar';
 import useSupabaseAuth from '@/src/hooks/useSupabaseAuth';
 import { useUserStore } from '@/src/store/useUserStore';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 
 const ProfileScreen = () => {
-	const [loading, setLoading] = useState(false);
-	const { getUserProfile, signOut } = useSupabaseAuth();
-	const { session } = useUserStore();
-	const navigation = useNavigation<any>();
-	const { avatarUrl, username, setIsLoggedIn, setAvatarUrl, setUsername } = useUserStore();
+  const [loading, setLoading] = useState(false);
+  const { getUserProfile, signOut } = useSupabaseAuth();
+  const navigation = useNavigation<any>();
+  const { session, avatarUrl, username, setIsLoggedIn, setAvatarUrl, setUsername } = useUserStore();
 
+  const handleGetProfile = useCallback(async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const { data, error, status } = await getUserProfile();
+      if (error && status !== 406) {
+        throw error;
+      }
+      if (data) {
+        setAvatarUrl(data.avatar_url);
+        setUsername(data.username);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [getUserProfile, setAvatarUrl, setUsername]);
 
-  const handleGetProfile = async () => {
-		setLoading(true);
-		try {
-			const { data, error, status } = await getUserProfile();
-			setLoading(false);
-			if (error && status !== 406) {
-				setLoading(false);
-				throw error;
-			}
+  useFocusEffect(
+    useCallback(() => {
+      if (session) {
+        handleGetProfile();
+      }
+    }, [session, handleGetProfile])
+  );
 
-			if (data) {
-				setAvatarUrl(data.avatar_url);
-				setUsername(data.username);
-			}
-		} catch (error) {
-			throw error;
-		} finally {
-			setLoading(false);
-		}
-	}
+  const handleSignOut = useCallback(async () => {
+    await signOut();
+    setIsLoggedIn(false);
+    Toast.show({
+      type: 'success',
+      text1: 'Logout Successful',
+      text2: 'Thanks for using Crypto Tracker',
+    });
+    navigation.navigate('Login');
+  }, [signOut, setIsLoggedIn, navigation]);
 
-	useFocusEffect(
-		useCallback(() => {
-			if(session) {
-				handleGetProfile();
-			}
-		}, [session])
-	)
-
-	const handleSignOut = async () => {
-		await signOut();
-		setIsLoggedIn(false);
-		Toast.show({
-			type: 'success',
-			text1: 'Logout Successful',
-			text2: 'Thanks for using Crypto Tracker',
-		});
-		navigation.navigate('Login');
-	}
   return (
     <View className='flex-1 bg-white'>
       <View>
@@ -121,4 +118,4 @@ const ProfileScreen = () => {
   );
 }
 
-export default ProfileScreen;
+export default React.memo(ProfileScreen);

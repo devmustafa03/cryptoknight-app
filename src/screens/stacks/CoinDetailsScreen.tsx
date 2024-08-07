@@ -1,5 +1,5 @@
 import { View, Text, ActivityIndicator, SafeAreaView, Pressable } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { Circle } from "@shopify/react-native-skia";
@@ -17,30 +17,24 @@ type RootStackParamList = {
 };
 
 type CoinDetailsScreenRouteProps = RouteProp<RootStackParamList, 'CoinDetails'>;
+const ToolTip = React.memo(({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) => {
+  return <Circle cx={x} cy={y} r={10} color="red" />;
+});
 
 const CoinDetailsScreen = () => {
   const route = useRoute<CoinDetailsScreenRouteProps>();
   const navigation = useNavigation();
+  const { coinUUID } = route.params || {};
 
-  if (!route.params?.coinUUID) {
-    return null;
-  }
-
-  const { coinUUID } = route.params;
   const [lineData, setLineData] = useState<Array<{ price: number; timestamp: number }>>([]);
   const [item, setItem] = useState<any>(null);
 
-  const blurhash =
-    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+  const blurhash = "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   const { state, isActive } = useChartPressState({
     x: 0,
     y: { price: 0 }
   });
-
-  const ToolTip = ({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) => {
-    return <Circle cx={x} cy={y} r={10} color="red" />;
-  };
 
   const { data: CoinsDetails, isLoading: CoinDetailsLoading } = useQuery({
     queryKey: ["CoinDetails", coinUUID],
@@ -53,7 +47,7 @@ const CoinDetailsScreen = () => {
   });
 
   useEffect(() => {
-    if (CoinHistory && CoinHistory.data.history) {
+    if (CoinHistory?.data?.history) {
       const datasets = CoinHistory.data.history.map((item: any) => ({
         price: parseFloat(item.price),
         timestamp: item.timestamp
@@ -61,10 +55,29 @@ const CoinDetailsScreen = () => {
       setLineData(datasets);
     }
 
-    if (CoinsDetails && CoinsDetails?.data?.coin) {
+    if (CoinsDetails?.data?.coin) {
       setItem(CoinsDetails.data.coin);
     }
   }, [CoinHistory, CoinsDetails]);
+
+  const handleGoBack = useCallback(() => navigation.goBack(), [navigation]);
+
+  const formattedPrice = useMemo(() => numeral(parseFloat(item?.price || "0")).format('$0,0.00'), [item?.price]);
+  const formattedHighPrice = useMemo(() => numeral(parseFloat(item?.high || "0")).format('$0,0.00'), [item?.high]);
+  const formattedMarkets = useMemo(() => numeral(parseFloat(item?.numberOfMarkets || "0")).format('0,0'), [item?.numberOfMarkets]);
+  const formattedExchanges = useMemo(() => numeral(parseFloat(item?.numberOfExchanges || "0")).format('0,0'), [item?.numberOfExchanges]);
+
+  if (!coinUUID) {
+    return null;
+  }
+
+  if (CoinDetailsLoading || CoinHistoryLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white">
@@ -77,23 +90,16 @@ const CoinDetailsScreen = () => {
       ) : (
         <SafeAreaView className="pt-10">
           <View className="flex-row justify-between items-center px-4">
-            <Pressable onPress={() => navigation.goBack()} className="rounded-full p-1">
-              <MaterialIcons name="arrow-back-ios" size={24} color="black" />
-            </Pressable>
+          <Pressable onPress={handleGoBack} className="rounded-full p-1">
+            <MaterialIcons name="arrow-back-ios" size={24} color="black" />
+          </Pressable>
+          <Text className="text-lg font-bold">{item?.symbol}</Text>
+          <View className="rounded-full p-1" />
+        </View>
 
-            <View>
-              <Text className="text-lg font-bold">{item?.symbol}</Text>
-            </View>
-
-            <View className="rounded-full p-1">
-            </View>
-          </View>
-
-          <View className="px-4 justify-center items-center py-2">
-            <Text className="font-extrabold text-3xl">
-              {numeral(parseFloat(item?.price || "0")).format('$0,0.00')}
-            </Text>
-          </View>
+        <View className="px-4 justify-center items-center py-2">
+          <Text className="font-extrabold text-3xl">{formattedPrice}</Text>
+        </View>
 
           {item && (
             <View className="flex-row justify-center items-center space-x-2 px-4 py-2">
@@ -126,59 +132,47 @@ const CoinDetailsScreen = () => {
             </View>
           )}
           <View style={{ height: 400 }} className="px-4">
-            {lineData.length > 0 && (
-              <CartesianChart
-                chartPressState={state}
-                axisOptions={{
-                  tickCount: 8,
-                  labelColor: "orange",
-                  labelOffset: { x: -1, y: 0 },
-                  formatXLabel: (ms) => format(new Date(ms * 1000), "MM/dd"),
-                }}
-                data={lineData}
-                xKey="timestamp"
-                yKeys={["price"]}
-              >
-                {({ points }: any) => (
-                  <>
-                    <Line points={points.price} color="orange" strokeWidth={2} />
-                    {isActive && <ToolTip x={state.x.position} y={state.y.price.position} />}
-                  </>
-                )}
-              </CartesianChart>
-            )}
-          </View>
+          {lineData.length > 0 && (
+            <CartesianChart
+              chartPressState={state}
+              axisOptions={{
+                tickCount: 8,
+                labelColor: "orange",
+                labelOffset: { x: -1, y: 0 },
+                formatXLabel: (ms) => format(new Date(ms * 1000), "MM/dd"),
+              }}
+              data={lineData}
+              xKey="timestamp"
+              yKeys={["price"]}
+            >
+              {({ points }: any) => (
+                <>
+                  <Line points={points.price} color="orange" strokeWidth={2} />
+                  {isActive && <ToolTip x={state.x.position} y={state.y.price.position} />}
+                </>
+              )}
+            </CartesianChart>
+          )}
+        </View>
 
-          <View className="flex-row justify-between px-4">
-            <Text className="text-base font-bold text-neutral-500">
-              All Time High
-            </Text>
-            <Text className="font-extrabold text-base">
-              {numeral(parseFloat(item?.high || "0")).format('$0,0.00')}
-            </Text>
-          </View>
+        <View className="flex-row justify-between px-4">
+          <Text className="text-base font-bold text-neutral-500">All Time High</Text>
+          <Text className="font-extrabold text-base">{formattedHighPrice}</Text>
+        </View>
 
-          <View className="flex-row justify-between px-4">
-            <Text className="text-base font-bold text-neutral-500">
-              Number of Markets
-            </Text>
-            <Text className="font-extrabold text-base">
-              {numeral(parseFloat(item?.numberOfMarkets || "0")).format('0,0')}
-            </Text>
-          </View>
+        <View className="flex-row justify-between px-4">
+          <Text className="text-base font-bold text-neutral-500">Number of Markets</Text>
+          <Text className="font-extrabold text-base">{formattedMarkets}</Text>
+        </View>
 
-          <View className="flex-row justify-between px-4">
-            <Text className="text-base font-bold text-neutral-500">
-              Number of Exchanges
-            </Text>
-            <Text className="font-extrabold text-base">
-              {numeral(parseFloat(item?.numberOfExchanges || "0")).format('0,0')}
-            </Text>
-          </View>
+        <View className="flex-row justify-between px-4">
+          <Text className="text-base font-bold text-neutral-500">Number of Exchanges</Text>
+          <Text className="font-extrabold text-base">{formattedExchanges}</Text>
+        </View>
         </SafeAreaView>
       )}
     </View>
   );
 };
 
-export default CoinDetailsScreen;
+export default React.memo(CoinDetailsScreen);

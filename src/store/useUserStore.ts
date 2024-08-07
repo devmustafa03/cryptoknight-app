@@ -27,20 +27,30 @@ export const useUserStore = create(
             isOnborded: false,
             avatarUrl: "",
             username: "",
-            setUser: (user: User | null) => set((state) => ({user})),
-            setIsLoggedIn: (isLoggedIn: Boolean) => set((state) => ({isLoggedIn})),
-            setSession: (session: Session | null) => set((state) => ({session})),
-            setAvatarUrl: (url: string) => set((state) => ({avatarUrl: url})),
-            setUsername: (username: string) => set((state) => ({username})),
-            updateUserProfile: (avatarUrl: string, username: string) => set((state) => ({
+            setUser: (user: User | null) => set({ user }),
+            setIsLoggedIn: (isLoggedIn: Boolean) => set({ isLoggedIn }),
+            setSession: (session: Session | null) => set({ session }),
+            setAvatarUrl: (avatarUrl: string) => set({ avatarUrl }),
+            setUsername: (username: string) => set({ username }),
+            updateUserProfile: (avatarUrl: string, username: string) => 
+                set((state) => ({
                 avatarUrl,
                 username,
-                user: state.user ? {...state.user, user_metadata: {...state.user.user_metadata, avatar_url: avatarUrl, username}} : null
-            })),
-        }),
-        {
+                user: state.user 
+                    ? { 
+                        ...state.user, 
+                        user_metadata: { 
+                        ...state.user.user_metadata, 
+                        avatar_url: avatarUrl, 
+                        username 
+                        } 
+                    } 
+                    : null
+                })),
+            }),
+            {
             name: "fintechcrypto-user-store",
             storage: createJSONStorage(() => AsyncStorage)
-        }
+            }
     )
 );

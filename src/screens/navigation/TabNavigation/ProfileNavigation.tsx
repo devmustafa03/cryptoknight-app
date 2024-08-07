@@ -1,8 +1,5 @@
 import React from "react";
 import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
-import MarketScreen from "../../tabs/market/MarketScreen";
-import NewsScreen from "../../tabs/news/NewsScreen";
-import NewsDetailsScreen from "../../stacks/NewsDetailsScreen";
 import ProfileScreen from "../../tabs/profile/ProfileScreen";
 import EditProfileScreen from "../../tabs/profile/EditProfileScreen";
 
